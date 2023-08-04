@@ -1,8 +1,52 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="mb-3">
+	<div class="row">
+		<div class="col">
+			<label class="form-label" for="Image">
+				Upload image:
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6 col-md-5 col-lg-4 col-xxl-3">
+			<input type="file" accept="image/*" id="Image" name="Image" class="form-control" />
+		</div>
+	</div>
 </div>
+<div class="mb-3">
+	<div class="row">
+		<div class="col-auto">
+			<button class="btn btn-outline-secondary" id="pushPhotoBtn">
+				Push
+			</button>
+		</div>
+	</div>
+</div>
+<hr />
+<div class="mb-3">
+	<div class="row">
+		<div class="col">
+			<label class="form-label" for="ImageName">
+				Search image
+			</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6 col-md-5 col-lg-4 col-xxl-3">
+			<input type="text" id="ImageName" name="ImageName" class="form-control" />
+		</div>
+	</div>
+</div>
+<div class="mb-3">
+	<div class="row">
+		<div class="col-auto">
+			<button class="btn btn-outline-primary" id="searchPhotoBtn">
+				Search Image
+			</button>
+		</div>
+	</div>
+</div>
+
