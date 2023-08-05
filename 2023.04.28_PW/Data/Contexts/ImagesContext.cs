@@ -10,6 +10,6 @@ namespace _2023._04._28_PW.Data.Contexts
 			Database.EnsureCreated();
 		}
 
-		public DbSet<ImageEntity> ImageEntities { get; set; }
+		public DbSet<BlobEntity> ImageEntities { get; set; }
 	}
 }

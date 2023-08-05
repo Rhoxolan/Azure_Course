@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.IO;
 
 namespace _2023._04._28_PW.Controllers
 {
@@ -20,11 +21,18 @@ namespace _2023._04._28_PW.Controllers
 		}
 
 		[HttpPost("blob")]
-		public async Task<IActionResult> PostPhile(UploadPhotoViewModel uploadPhotoViewModel)
+		public async Task<IActionResult> PostBlob(UploadBlobViewModel uploadBlobViewModel)
 		{
+			if(uploadBlobViewModel.Blob is null)
+			{
+				return UnprocessableEntity();
+			}
 			BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(Environment.GetEnvironmentVariable("Containers:Home"));
 			await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
 			await containerClient.CreateIfNotExistsAsync();
+			BlobClient blobClient = containerClient.GetBlobClient(uploadBlobViewModel.Blob.FileName);
+			using var uploadedBlob = uploadBlobViewModel.Blob.OpenReadStream();
+			await blobClient.UploadAsync(uploadedBlob, overwrite: true);
 			return Ok();
 		}
 
