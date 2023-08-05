@@ -1,18 +1,21 @@
-﻿using _2023._04._28_PW.Models;
+﻿using _2023._04._28_PW.Data.Contexts;
+using _2023._04._28_PW.Data.Entities;
+using _2023._04._28_PW.Models;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.IO;
 
 namespace _2023._04._28_PW.Controllers
 {
 	public class HomeController : Controller
 	{
 		private readonly BlobServiceClient _blobServiceClient;
+		private readonly ImagesContext _context;
 
-		public HomeController( BlobServiceClient blobServiceClient)
+		public HomeController(BlobServiceClient blobServiceClient, ImagesContext context)
 		{
 			_blobServiceClient = blobServiceClient;
+			_context = context;
 		}
 
 		public IActionResult Index()
@@ -33,6 +36,13 @@ namespace _2023._04._28_PW.Controllers
 			BlobClient blobClient = containerClient.GetBlobClient(uploadBlobViewModel.Blob.FileName);
 			using var uploadedBlob = uploadBlobViewModel.Blob.OpenReadStream();
 			await blobClient.UploadAsync(uploadedBlob, overwrite: true);
+			BlobEntity blobEntity = new BlobEntity
+			{
+				NameKey = uploadBlobViewModel.Blob.FileName,
+				Path = $"https://{containerClient.AccountName}.blob.core.windows.net/{containerClient.Name}/{uploadBlobViewModel.Blob.FileName}"
+			};
+			_context.ImageEntities.Add(blobEntity);
+			await _context.SaveChangesAsync();
 			return Ok();
 		}
 
