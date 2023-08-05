@@ -11,11 +11,14 @@ namespace _2023._04._28_PW.Controllers
 	{
 		private readonly BlobServiceClient _blobServiceClient;
 		private readonly ImagesContext _context;
+		private readonly IConfiguration _configuration;
 
-		public HomeController(BlobServiceClient blobServiceClient, ImagesContext context)
+
+		public HomeController(BlobServiceClient blobServiceClient, ImagesContext context, IConfiguration configuration)
 		{
 			_blobServiceClient = blobServiceClient;
 			_context = context;
+			_configuration = configuration;
 		}
 
 		public IActionResult Index()
@@ -30,7 +33,7 @@ namespace _2023._04._28_PW.Controllers
 			{
 				return UnprocessableEntity();
 			}
-			BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(Environment.GetEnvironmentVariable("Containers:Home"));
+			BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(_configuration["Container:DefaultContainerName"]);
 			await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
 			await containerClient.CreateIfNotExistsAsync();
 			BlobClient blobClient = containerClient.GetBlobClient(uploadBlobViewModel.Blob.FileName);
