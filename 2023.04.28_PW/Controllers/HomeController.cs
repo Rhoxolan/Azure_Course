@@ -49,6 +49,22 @@ namespace _2023._04._28_PW.Controllers
 			return Ok();
 		}
 
+		[HttpGet("blob/{name?}")]
+		public IActionResult GetBlob(SearchBlobViewModel searchBlobViewModel)
+		{
+			if (string.IsNullOrEmpty(searchBlobViewModel.Name))
+			{
+				return NotFound();
+			}
+			var blobEntity = _context.ImageEntities.Where(e => e.NameKey == searchBlobViewModel.Name).First();
+			if (blobEntity == null)
+			{
+				return NotFound();
+			}
+			return Content(blobEntity.Path);
+		}
+
+
 		public IActionResult Privacy()
 		{
 			return View();
