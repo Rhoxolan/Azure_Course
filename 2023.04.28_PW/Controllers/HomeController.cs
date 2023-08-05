@@ -1,4 +1,5 @@
 ﻿using _2023._04._28_PW.Models;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +7,25 @@ namespace _2023._04._28_PW.Controllers
 {
 	public class HomeController : Controller
 	{
-		private readonly ILogger<HomeController> _logger;
+		private readonly BlobServiceClient _blobServiceClient;
 
-		public HomeController(ILogger<HomeController> logger)
+		public HomeController( BlobServiceClient blobServiceClient)
 		{
-			_logger = logger;
+			_blobServiceClient = blobServiceClient;
 		}
 
 		public IActionResult Index()
 		{
 			return View();
+		}
+
+		[HttpPost("blob")]
+		public async Task<IActionResult> PostPhile(UploadPhotoViewModel uploadPhotoViewModel)
+		{
+			BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(Environment.GetEnvironmentVariable("Containers:Home"));
+			await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
+			await containerClient.CreateIfNotExistsAsync();
+			return Ok();
 		}
 
 		public IActionResult Privacy()

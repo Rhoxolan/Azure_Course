@@ -1,5 +1,6 @@
 using _2023._04._28_PW.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,12 @@ builder.Services.AddDbContext<ImagesContext>(opt
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAzureClients(clientBuilder =>
+{
+	clientBuilder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING"));
+});
+
 
 var app = builder.Build();
 
