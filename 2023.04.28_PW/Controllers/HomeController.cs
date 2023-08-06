@@ -56,7 +56,7 @@ namespace _2023._04._28_PW.Controllers
 			{
 				return NotFound();
 			}
-			var blobEntity = _context.ImageEntities.Where(e => e.NameKey == searchBlobViewModel.Name).First();
+			var blobEntity = _context.ImageEntities.Where(e => e.NameKey == searchBlobViewModel.Name).FirstOrDefault();
 			if (blobEntity == null)
 			{
 				return NotFound();
