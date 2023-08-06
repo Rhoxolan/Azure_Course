@@ -1,7 +1,5 @@
-﻿using _2023._04._28_PW.Data.Contexts;
-using _2023._04._28_PW.Data.Entities;
-using _2023._04._28_PW.Models;
-using Azure.Storage.Blobs;
+﻿using _2023._04._28_PW.Models;
+using _2023._04._28_PW.Services.BlobService;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -9,16 +7,11 @@ namespace _2023._04._28_PW.Controllers
 {
 	public class HomeController : Controller
 	{
-		private readonly BlobServiceClient _blobServiceClient;
-		private readonly ImagesContext _context;
-		private readonly IConfiguration _configuration;
+		private IBlobService _blobService;
 
-
-		public HomeController(BlobServiceClient blobServiceClient, ImagesContext context, IConfiguration configuration)
+		public HomeController(IBlobService blobService)
 		{
-			_blobServiceClient = blobServiceClient;
-			_context = context;
-			_configuration = configuration;
+			_blobService = blobService;
 		}
 
 		public IActionResult Index()
@@ -29,41 +22,42 @@ namespace _2023._04._28_PW.Controllers
 		[HttpPost("blob")]
 		public async Task<IActionResult> PostBlob(UploadBlobViewModel uploadBlobViewModel)
 		{
-			if(uploadBlobViewModel.Blob is null)
+			try
 			{
-				return UnprocessableEntity();
+				if (uploadBlobViewModel.Blob is null)
+				{
+					return UnprocessableEntity();
+				}
+				await _blobService.AddBlobAsync(uploadBlobViewModel.Blob);
+				return Ok();
 			}
-			BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(_configuration["Container:DefaultContainerName"]);
-			await containerClient.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.BlobContainer);
-			await containerClient.CreateIfNotExistsAsync();
-			BlobClient blobClient = containerClient.GetBlobClient(uploadBlobViewModel.Blob.FileName);
-			using var uploadedBlob = uploadBlobViewModel.Blob.OpenReadStream();
-			await blobClient.UploadAsync(uploadedBlob, overwrite: true);
-			BlobEntity blobEntity = new BlobEntity
+			catch
 			{
-				NameKey = uploadBlobViewModel.Blob.FileName,
-				Path = $"https://{containerClient.AccountName}.blob.core.windows.net/{containerClient.Name}/{uploadBlobViewModel.Blob.FileName}"
-			};
-			_context.ImageEntities.Add(blobEntity);
-			await _context.SaveChangesAsync();
-			return Ok();
+				return Problem("Data processing error. Please contact to developer");
+			}
 		}
 
 		[HttpGet("blob/{name?}")]
 		public IActionResult GetBlob(SearchBlobViewModel searchBlobViewModel)
 		{
-			if (string.IsNullOrEmpty(searchBlobViewModel.Name))
+			try
 			{
-				return NotFound();
+				if (string.IsNullOrEmpty(searchBlobViewModel.Name))
+				{
+					return NotFound();
+				}
+				var path = _blobService.GetBlobUrl(searchBlobViewModel.Name);
+				if (string.IsNullOrEmpty(path))
+				{
+					return NotFound();
+				}
+				return Content(path);
 			}
-			var blobEntity = _context.ImageEntities.Where(e => e.NameKey == searchBlobViewModel.Name).FirstOrDefault();
-			if (blobEntity == null)
+			catch
 			{
-				return NotFound();
+				return Problem("Data processing error. Please contact to developer");
 			}
-			return Content(blobEntity.Path);
 		}
-
 
 		public IActionResult Privacy()
 		{

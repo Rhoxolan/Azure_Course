@@ -1,4 +1,5 @@
 using _2023._04._28_PW.Data.Contexts;
+using _2023._04._28_PW.Services.BlobService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 
@@ -14,6 +15,8 @@ builder.Services.AddAzureClients(clientBuilder =>
 {
 	clientBuilder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING"));
 });
+
+builder.Services.AddTransient<IBlobService, BlobService>();
 
 
 var app = builder.Build();
