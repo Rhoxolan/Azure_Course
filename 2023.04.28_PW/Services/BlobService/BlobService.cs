@@ -28,8 +28,8 @@ namespace _2023._04._28_PW.Services.BlobService
 			BlobEntity blobEntity = new BlobEntity
 			{
 				NameKey = blob.FileName,
-				Path = $"https://{containerClient.AccountName}.blob.core.windows.net/{containerClient.Name}/{blob.FileName}"
-			};
+				Path = blobClient.Uri.AbsoluteUri
+            };
 			_context.ImageEntities.Add(blobEntity);
 			await _context.SaveChangesAsync();
 		}
