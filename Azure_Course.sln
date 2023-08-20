@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Примечание.txt = Примечание.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2023.05.03_PW", "2023.05.03_PW\2023.05.03_PW.csproj", "{B3586F30-E5E3-49F0-8468-38E3686BACD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{14FA1340-2E73-432C-829B-75200F553C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14FA1340-2E73-432C-829B-75200F553C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14FA1340-2E73-432C-829B-75200F553C19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3586F30-E5E3-49F0-8468-38E3686BACD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3586F30-E5E3-49F0-8468-38E3686BACD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3586F30-E5E3-49F0-8468-38E3686BACD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3586F30-E5E3-49F0-8468-38E3686BACD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
