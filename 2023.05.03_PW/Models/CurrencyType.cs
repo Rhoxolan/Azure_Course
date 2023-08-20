@@ -3,7 +3,7 @@
     public enum CurrencyType
     {
         None = 0,
-        USD,
+		USD,
         EUR,
         CAD,
         CNY,

@@ -1,7 +1,14 @@
+using Microsoft.Extensions.Azure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    //clientBuilder.AddBlobServiceClient(builder.Configuration["AzuriteLocalEmulatorConnectionString:blob"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["AzuriteLocalEmulatorConnectionString:queue"], preferMsi: true);
+});
 
 var app = builder.Build();
 
