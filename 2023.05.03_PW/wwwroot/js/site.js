@@ -3,27 +3,19 @@
     var sellerInput = document.getElementById("Seller");
     var amountInput = document.getElementById("Amount");
 
-    var currencyType = currencyTypeSelect.value;
-    var seller = sellerInput.value;
-    var amount = parseInt(amountInput.value);
+    var formData = new FormData();
+    formData.append("CurrencyType", currencyTypeSelect.value);
+    formData.append("SellerLastName", sellerInput.value);
+    formData.append("Amount", amountInput.value);
 
-    var lotData = {
-        CurrencyType: currencyType,
-        SellerLastName: seller,
-        Amount: amount
-    };
-
-    await sendPostRequest(lotData);
+    await sendPostRequest(formData);
 });
 
-async function sendPostRequest(lotData) {
+async function sendPostRequest(formData) {
     try {
         let resp = await fetch("/Home/AddLot", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(lotData)
+            body: formData
         });
 
         if (resp.ok === true) {

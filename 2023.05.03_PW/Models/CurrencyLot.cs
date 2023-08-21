@@ -1,11 +1,11 @@
 ﻿namespace _2023._05._03_PW.Models
 {
-    public record CurrencyLot
+    public class CurrencyLot
     {
-        public required CurrencyType CurrencyType { get; init; }
+        public CurrencyType CurrencyType { get; set; }
 
-        public required int Amount { get; init; }
+        public int Amount { get; set; }
 
-        public required string SellerLastName { get; init; }
+        public string SellerLastName { get; set; }
     }
 }
