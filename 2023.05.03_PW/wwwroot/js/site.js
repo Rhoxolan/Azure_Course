@@ -1,13 +1,8 @@
 ﻿document.getElementById("addLotBtn").addEventListener("click", async function () {
-    var currencyTypeSelect = document.getElementById("CurrencyType");
-    var sellerInput = document.getElementById("Seller");
-    var amountInput = document.getElementById("Amount");
-
     var formData = new FormData();
-    formData.append("CurrencyType", currencyTypeSelect.value);
-    formData.append("SellerLastName", sellerInput.value);
-    formData.append("Amount", amountInput.value);
-
+    formData.append("CurrencyType", document.getElementById("CurrencyType").value);
+    formData.append("SellerLastName", document.getElementById("Seller").value);
+    formData.append("Amount", document.getElementById("Amount").value);
     await sendPostRequest(formData);
 });
 
