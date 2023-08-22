@@ -36,6 +36,11 @@ namespace _2023._05._03_PW.Controllers
             return Ok(receipt.Value.MessageId);
 		}
 
+        public async Task<IActionResult> GetLots(CurrencyType currencyType)
+        {
+            throw new NotImplementedException();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
