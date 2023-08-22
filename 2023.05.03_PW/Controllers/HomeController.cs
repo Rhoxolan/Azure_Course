@@ -38,7 +38,10 @@ namespace _2023._05._03_PW.Controllers
 
         public async Task<IActionResult> GetLots(CurrencyType currencyType)
         {
-            throw new NotImplementedException();
+			QueueClient queueClient = _queueServiceClient.GetQueueClient("lotes");
+			await queueClient.CreateIfNotExistsAsync();
+            //Попробовать Сделать фильтрацию на стороне очереди
+			throw new NotImplementedException();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
