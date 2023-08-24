@@ -33,10 +33,9 @@ async function updateLotsTable(currencyType) {
         let resp = await fetch(`/Home/GetLots?currencyType=${currencyType}`);
         if (resp.ok === true) {
             let lots = await resp.json();
-            debugger;
             const showLotsDiv = document.getElementById("showLotsDiv");
             showLotsDiv.innerHTML = "";
-            showLotsDiv.appendChild(generateTableElement(lots));
+            showLotsDiv.appendChild(generateTableElement(lots.map(l => JSON.parse(l))));
         } else {
             console.error("Error fetching lots!");
         }
@@ -65,13 +64,13 @@ function generateTableElement(lots) {
     for (let lot of lots) {
         const row = document.createElement("tr");
         const tdCurrencyType = document.createElement("td");
-        tdCurrencyType.textContent = lot.currencyType;
+        tdCurrencyType.textContent = lot.CurrencyType;
         row.appendChild(tdCurrencyType);
         const tdAmount = document.createElement("td");
-        tdAmount.textContent = lot.amount;
+        tdAmount.textContent = lot.Amount;
         row.appendChild(tdAmount);
         const tdSeller = document.createElement("td");
-        tdSeller.textContent = lot.sellerLastName;
+        tdSeller.textContent = lot.SellerLastName;
         row.appendChild(tdSeller);
         tbody.appendChild(row);
     }
