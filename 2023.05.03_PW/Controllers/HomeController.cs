@@ -30,7 +30,7 @@ namespace _2023._05._03_PW.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLot(CurrencyLot currencyLot)
         {
-			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes_{currencyLot.CurrencyType}");
+			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyLot.CurrencyType.ToString().ToLower()}");
             await queueClient.CreateIfNotExistsAsync();
 			var receipt = await queueClient.SendMessageAsync(JsonSerializer.Serialize(currencyLot), timeToLive: TimeSpan.FromDays(1));
             return Ok(receipt.Value.MessageId);
@@ -38,10 +38,10 @@ namespace _2023._05._03_PW.Controllers
 
         public async Task<IActionResult> GetLots(CurrencyType currencyType)
         {
-			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes_{currencyType}");
+			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
 			await queueClient.CreateIfNotExistsAsync();
             var azureResponse = await queueClient.PeekMessagesAsync(maxMessages: 10);
-            return Ok(azureResponse.Value);
+            return Ok(azureResponse.Value.Select(m => m.Body.ToString()));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

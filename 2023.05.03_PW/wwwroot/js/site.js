@@ -33,6 +33,7 @@ async function updateLotsTable(currencyType) {
         let resp = await fetch(`/Home/GetLots?currencyType=${currencyType}`);
         if (resp.ok === true) {
             let lots = await resp.json();
+            debugger;
             const showLotsDiv = document.getElementById("showLotsDiv");
             showLotsDiv.innerHTML = "";
             showLotsDiv.appendChild(generateTableElement(lots));
@@ -78,9 +79,9 @@ function generateTableElement(lots) {
     return table;
 }
 
-setInterval(async function () {
-    const selectedCurrency = document.getElementById("CurrencyTypeShow").value;
-    if (selectedCurrency) {
-        await updateLotsTable(selectedCurrency);
-    }
-}, 10000);
+//setInterval(async function () {
+//    const selectedCurrency = document.getElementById("CurrencyTypeShow").value;
+//    if (selectedCurrency) {
+//        await updateLotsTable(selectedCurrency);
+//    }
+//}, 10000);
