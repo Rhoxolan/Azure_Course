@@ -1,4 +1,6 @@
-﻿document.getElementById("addLotBtn").addEventListener("click", async function () {
+﻿let updateTimer = null;
+
+document.getElementById("addLotBtn").addEventListener("click", async function () {
     var formData = new FormData();
     formData.append("CurrencyType", document.getElementById("CurrencyType").value);
     formData.append("SellerLastName", document.getElementById("Seller").value);
@@ -7,7 +9,19 @@
 });
 
 document.getElementById("CurrencyTypeShow").addEventListener("change", async function () {
-    await updateLotsTable(this.value);
+    switch (this.value) {
+        case "None":
+            cleanLotsTable();
+            clearInterval(updateTimer);
+            break;
+        default:
+            await updateLotsTable(this.value);
+            clearInterval(updateTimer);
+            updateTimer = setInterval(async () => {
+                await updateLotsTable(this.value);
+            }, 10000);
+            break;
+    }
 });
 
 async function sendPostRequest(formData) {
@@ -44,6 +58,10 @@ async function updateLotsTable(currencyType) {
     }
 }
 
+function cleanLotsTable() {
+    document.getElementById("showLotsDiv").innerHTML = "";
+}
+
 function generateTableElement(lots) {
     const table = document.createElement("table");
     table.classList.add("table", "table-striped");
@@ -77,10 +95,3 @@ function generateTableElement(lots) {
     table.appendChild(tbody);
     return table;
 }
-
-//setInterval(async function () {
-//    const selectedCurrency = document.getElementById("CurrencyTypeShow").value;
-//    if (selectedCurrency) {
-//        await updateLotsTable(selectedCurrency);
-//    }
-//}, 10000);
