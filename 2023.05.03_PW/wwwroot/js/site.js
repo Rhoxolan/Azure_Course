@@ -49,7 +49,11 @@ async function updateLotsTable(currencyType) {
             let lots = await resp.json();
             const showLotsDiv = document.getElementById("showLotsDiv");
             showLotsDiv.innerHTML = "";
-            showLotsDiv.appendChild(generateTableElement(lots.map(l => JSON.parse(l))));
+            showLotsDiv.appendChild(generateTableElement(lots.map(l => {
+                let parsedMessage = JSON.parse(l.messageText);
+                parsedMessage.MessageId = l.messageId;
+                return parsedMessage;
+            })));
         } else {
             console.error("Error fetching lots!");
         }
@@ -76,6 +80,9 @@ function generateTableElement(lots) {
     const thSeller = document.createElement("th");
     thSeller.textContent = "Seller";
     headerRow.appendChild(thSeller);
+    const thActions = document.createElement("th"); // New column for actions
+    thActions.textContent = "Actions";
+    headerRow.appendChild(thActions);
     thead.appendChild(headerRow);
     table.appendChild(thead);
     const tbody = document.createElement("tbody");
@@ -90,8 +97,36 @@ function generateTableElement(lots) {
         const tdSeller = document.createElement("td");
         tdSeller.textContent = lot.SellerLastName;
         row.appendChild(tdSeller);
+
+        // Create the Buy Lot button
+        const tdActions = document.createElement("td");
+        const buyButton = document.createElement("button");
+        buyButton.textContent = "Buy Lot";
+        buyButton.classList.add("btn", "btn-outline-warning", "buy-lot-button");
+        buyButton.dataset.messageId = lot.MessageId; // Attach MessageId to the button
+        buyButton.addEventListener("click", buyLotHandler);
+        tdActions.appendChild(buyButton);
+        row.appendChild(tdActions);
+
         tbody.appendChild(row);
     }
     table.appendChild(tbody);
     return table;
+}
+
+async function buyLotHandler(event) {
+    const messageId = event.target.dataset.messageId;
+    try {
+        let resp = await fetch(`/Home/BuyLot?messageId=${messageId}`, {
+            method: "DELETE"
+        });
+        if (resp.ok === true) {
+            console.log("Lot bought successfully!");
+            // You might want to update the table here or handle the UI accordingly
+        } else {
+            console.error("Error buying lot!");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }

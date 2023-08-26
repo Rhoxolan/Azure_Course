@@ -41,7 +41,7 @@ namespace _2023._05._03_PW.Controllers
 			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
 			await queueClient.CreateIfNotExistsAsync();
             var azureResponse = await queueClient.PeekMessagesAsync(maxMessages: 10);
-            return Ok(azureResponse.Value.Select(m => m.Body.ToString()));
+            return Ok(azureResponse.Value);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
