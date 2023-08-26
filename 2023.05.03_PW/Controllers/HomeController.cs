@@ -1,4 +1,6 @@
-﻿using _2023._05._03_PW.Models;
+﻿using _2023._05._03_PW.Data.Contexts;
+using _2023._05._03_PW.Data.Models;
+using _2023._05._03_PW.Models;
 using Azure.Storage.Queues;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -10,11 +12,13 @@ namespace _2023._05._03_PW.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 		private readonly QueueServiceClient _queueServiceClient;
+        private readonly MessagesDataContext _messagesDataContext;
 
-		public HomeController(ILogger<HomeController> logger, QueueServiceClient queueServiceClient)
+		public HomeController(ILogger<HomeController> logger, QueueServiceClient queueServiceClient, MessagesDataContext messagesDataContext)
 		{
 			_logger = logger;
 			_queueServiceClient = queueServiceClient;
+			_messagesDataContext = messagesDataContext;
 		}
 
 		public IActionResult Index()
@@ -33,6 +37,13 @@ namespace _2023._05._03_PW.Controllers
 			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyLot.CurrencyType.ToString().ToLower()}");
             await queueClient.CreateIfNotExistsAsync();
 			var receipt = await queueClient.SendMessageAsync(JsonSerializer.Serialize(currencyLot), timeToLive: TimeSpan.FromDays(1));
+            var messageDataEntity = new MessageDataEntity
+            {
+                MessageId = receipt.Value.MessageId,
+                PopReceipt = receipt.Value.PopReceipt
+            };
+            await _messagesDataContext.MessageDataEntities.AddAsync(messageDataEntity);
+            await _messagesDataContext.SaveChangesAsync();
             return Ok(receipt.Value.MessageId);
 		}
 
@@ -48,8 +59,17 @@ namespace _2023._05._03_PW.Controllers
         [HttpDelete]
         public async Task<IActionResult> BuyLot(string messageId, CurrencyType currencyType)
         {
+            //Протестировать!!!
             QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
-            throw new NotImplementedException();
+            var messageDataEntity = _messagesDataContext.MessageDataEntities.FirstOrDefault(m => m.MessageId == messageId);
+            if(messageDataEntity == null)
+            {
+                return NotFound();
+            }
+			await queueClient.DeleteMessageAsync(messageId, messageDataEntity.PopReceipt);
+            _messagesDataContext.MessageDataEntities.Remove(messageDataEntity);
+            await _messagesDataContext.SaveChangesAsync();
+            return NoContent();
 
 		}
 

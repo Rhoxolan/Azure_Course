@@ -1,5 +1,10 @@
+using _2023._05._03_PW.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<MessagesDataContext>(opt
+	=> opt.UseSqlServer(builder.Configuration.GetConnectionString("ImagesLocalDataDB")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -7,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAzureClients(clientBuilder =>
 {
     //clientBuilder.AddBlobServiceClient(builder.Configuration["AzuriteLocalEmulatorConnectionString:blob"], preferMsi: true);
-    clientBuilder.AddQueueServiceClient(builder.Configuration["AzuriteLocalEmulatorConnectionString:queue"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["AzuriteLocalEmulatorConnectionString:queue"]!, preferMsi: true);
 });
 
 var app = builder.Build();
