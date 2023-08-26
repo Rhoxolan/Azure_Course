@@ -80,7 +80,7 @@ function generateTableElement(lots) {
     const thSeller = document.createElement("th");
     thSeller.textContent = "Seller";
     headerRow.appendChild(thSeller);
-    const thActions = document.createElement("th"); // New column for actions
+    const thActions = document.createElement("th");
     thActions.textContent = "Actions";
     headerRow.appendChild(thActions);
     thead.appendChild(headerRow);
@@ -97,17 +97,15 @@ function generateTableElement(lots) {
         const tdSeller = document.createElement("td");
         tdSeller.textContent = lot.SellerLastName;
         row.appendChild(tdSeller);
-
-        // Create the Buy Lot button
         const tdActions = document.createElement("td");
         const buyButton = document.createElement("button");
         buyButton.textContent = "Buy Lot";
         buyButton.classList.add("btn", "btn-outline-warning", "buy-lot-button");
-        buyButton.dataset.messageId = lot.MessageId; // Attach MessageId to the button
+        buyButton.dataset.messageId = lot.MessageId;
+        buyButton.dataset.currencyType = lot.CurrencyType;
         buyButton.addEventListener("click", buyLotHandler);
         tdActions.appendChild(buyButton);
         row.appendChild(tdActions);
-
         tbody.appendChild(row);
     }
     table.appendChild(tbody);
@@ -116,13 +114,13 @@ function generateTableElement(lots) {
 
 async function buyLotHandler(event) {
     const messageId = event.target.dataset.messageId;
+    let currencyType = event.target.dataset.currencyType;
     try {
-        let resp = await fetch(`/Home/BuyLot?messageId=${messageId}`, {
+        let resp = await fetch(`/Home/BuyLot?messageId=${messageId}&currencyType=${currencyType}`, {
             method: "DELETE"
         });
         if (resp.ok === true) {
             console.log("Lot bought successfully!");
-            // You might want to update the table here or handle the UI accordingly
         } else {
             console.error("Error buying lot!");
         }
