@@ -1,7 +1,11 @@
 using _2023._05._03_PW.Data.Contexts;
+using _2023._05._03_PW.Services.LotService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddTransient<ILotService, LotService>();
 
 builder.Services.AddDbContext<MessagesDataContext>(opt
 	=> opt.UseSqlServer(builder.Configuration.GetConnectionString("ImagesLocalDataDB")));

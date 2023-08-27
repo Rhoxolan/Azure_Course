@@ -1,6 +1,7 @@
 ﻿using _2023._05._03_PW.Data.Contexts;
 using _2023._05._03_PW.Data.Models;
 using _2023._05._03_PW.Models;
+using _2023._05._03_PW.Services.LotService;
 using Azure.Storage.Queues;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,12 +14,14 @@ namespace _2023._05._03_PW.Controllers
         private readonly ILogger<HomeController> _logger;
 		private readonly QueueServiceClient _queueServiceClient;
         private readonly MessagesDataContext _messagesDataContext;
+        private readonly ILotService _lotService;
 
-		public HomeController(ILogger<HomeController> logger, QueueServiceClient queueServiceClient, MessagesDataContext messagesDataContext)
+		public HomeController(ILogger<HomeController> logger, QueueServiceClient queueServiceClient, MessagesDataContext messagesDataContext, ILotService lotService)
 		{
 			_logger = logger;
 			_queueServiceClient = queueServiceClient;
 			_messagesDataContext = messagesDataContext;
+			_lotService = lotService;
 		}
 
 		public IActionResult Index()
@@ -34,40 +37,40 @@ namespace _2023._05._03_PW.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLot(CurrencyLot currencyLot)
         {
-			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyLot.CurrencyType.ToString().ToLower()}");
-            await queueClient.CreateIfNotExistsAsync();
-			var receipt = await queueClient.SendMessageAsync(JsonSerializer.Serialize(currencyLot), timeToLive: TimeSpan.FromDays(1));
-            var messageDataEntity = new MessageDataEntity
+            try
             {
-                MessageId = receipt.Value.MessageId,
-                PopReceipt = receipt.Value.PopReceipt
-            };
-            await _messagesDataContext.MessageDataEntities.AddAsync(messageDataEntity);
-            await _messagesDataContext.SaveChangesAsync();
-            return Ok(receipt.Value.MessageId);
+				var receipt = await _lotService.AddLotAsync(currencyLot);
+				return Ok(receipt.MessageId);
+			}
+            catch
+            {
+				return Problem("Data processing error. Please contact to developer");
+			}
 		}
 
         [HttpGet]
         public async Task<IActionResult> GetLots(CurrencyType currencyType)
         {
-			QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
-			await queueClient.CreateIfNotExistsAsync();
-            var azureResponse = await queueClient.PeekMessagesAsync(maxMessages: 10);
-            return Ok(azureResponse.Value);
+			try
+			{
+                var lots = await _lotService.GetLotsAsync(currencyType);
+                return Ok(lots);
+			}
+			catch
+			{
+				return Problem("Data processing error. Please contact to developer");
+			}
         }
 
         [HttpDelete]
         public async Task<IActionResult> BuyLot(string messageId, CurrencyType currencyType)
         {
-            QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
-            var messageDataEntity = _messagesDataContext.MessageDataEntities.FirstOrDefault(m => m.MessageId == messageId);
+            var messageDataEntity = _lotService.GetLotData(messageId, currencyType);
             if(messageDataEntity == null)
             {
                 return NotFound();
             }
-			await queueClient.DeleteMessageAsync(messageId, messageDataEntity.PopReceipt);
-            _messagesDataContext.MessageDataEntities.Remove(messageDataEntity);
-            await _messagesDataContext.SaveChangesAsync();
+            await _lotService.BuyLotAsync(messageDataEntity.Value, currencyType);
             return NoContent();
 
 		}
