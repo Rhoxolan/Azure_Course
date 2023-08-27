@@ -121,10 +121,18 @@ async function buyLotHandler(event) {
         });
         if (resp.ok === true) {
             console.log("Lot bought successfully!");
+            removeLotFromTable(messageId);
         } else {
             console.error("Error buying lot!");
         }
     } catch (error) {
         console.error("Error:", error);
+    }
+}
+
+function removeLotFromTable(messageId) {
+    const lotRow = document.querySelector(`[data-message-id="${messageId}"]`).closest("tr");
+    if (lotRow) {
+        lotRow.remove();
     }
 }
