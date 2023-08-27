@@ -1,2 +1,5 @@
 28.04.2023 - Azure Blob Storage
 PW1 - загрузка файлов на сервер Azure в контейнер с типом доступа "контейнер" с приложения ASP.NET Core, отображение изображений по их URL. Использование классов BlobServiceClient, BlobContainerClient и BlobClient. Пример регистрации класса BlobServiceClient как сервиса с использованием Azure SDK.
+
+03.05.2023 - Черги повідомлень Azure
+PW1 - приложение "Lots". Создание, отображение и удаление сообщений в очереди Azure. Использование классов QueueServiceClient и QueueClient. Пример регистрации класса QueueServiceClient как сервиса с использованием Azure SDK.
