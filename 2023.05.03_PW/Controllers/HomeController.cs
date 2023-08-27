@@ -59,7 +59,6 @@ namespace _2023._05._03_PW.Controllers
         [HttpDelete]
         public async Task<IActionResult> BuyLot(string messageId, CurrencyType currencyType)
         {
-            //Протестировать!!!
             QueueClient queueClient = _queueServiceClient.GetQueueClient($"lotes-{currencyType.ToString().ToLower()}");
             var messageDataEntity = _messagesDataContext.MessageDataEntities.FirstOrDefault(m => m.MessageId == messageId);
             if(messageDataEntity == null)
