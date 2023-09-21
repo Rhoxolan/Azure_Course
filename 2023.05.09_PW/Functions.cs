@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-namespace Functions
+
+namespace _2023._05._09_PW
 {
 	public static class Functions
 	{
