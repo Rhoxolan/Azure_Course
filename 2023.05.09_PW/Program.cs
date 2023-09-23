@@ -11,7 +11,10 @@ builder.ConfigureLogging((HostBuilderContext context, ILoggingBuilder logBuilder
 {
 	logBuilder.AddConsole();
 	logBuilder.AddApplicationInsightsWebJobs(config =>
-		config.InstrumentationKey = context.Configuration.GetSection("APPINSIGHTS_INSTRUMENTATIONSKEY").Value!);
+	{
+		config.ConnectionString = context.Configuration.GetSection("APPINSIGHTS_INSTRUMENTATIONCONNECTIONSTRING").Value!;
+		config.InstrumentationKey = context.Configuration.GetSection("APPINSIGHTS_INSTRUMENTATIONSKEY").Value!;
+	});
 });
 IHost host = builder.Build();
 using (host)
