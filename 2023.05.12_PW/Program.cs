@@ -9,7 +9,17 @@ namespace _2023._05._12_PW
 
 		static async Task Main(string[] args)
 		{
-			Console.WriteLine("Hello, World!");
+			Database database = await CreateAndGetDatabaseAsync();
+			Container container = await CreateAndGetContainerAsync(database);
+			var entity = new Entity
+			{
+				Id = Guid.NewGuid().ToString(),
+				Name = "Test"
+			};
+			var item = await container.CreateItemAsync(item: entity, partitionKey: new(entity.Name)); ;
+			Console.WriteLine($"The element with Id: {item.Resource.Id}" +
+				$" added to the database. " +
+				$"Complexity of the operation: {item.RequestCharge}");
 		}
 
 
