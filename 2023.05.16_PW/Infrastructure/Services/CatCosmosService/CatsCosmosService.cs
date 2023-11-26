@@ -12,9 +12,33 @@ namespace _2023._05._16_PW.Infrastructure.Services.CatCosmosService
 			_container = cosmosClient.GetContainer(databaseName, containerName);
 		}
 
-		public Task<IEnumerable<Cat>> GetAsync(string sqlCosmosQuery)
+		public async Task<Cat> AddAsync(Cat cat)
 		{
-			throw new NotImplementedException();
+			Cat newCat = await _container.CreateItemAsync(cat, new PartitionKey(cat.Name));
+			return newCat;
+		}
+
+		public async Task DeleteAsync(string id, string name)
+		{
+			await _container.DeleteItemAsync<Cat>(id, new PartitionKey(name));
+		}
+
+		public async Task<IEnumerable<Cat>> GetAsync(string sqlCosmosQuery)
+		{
+			FeedIterator<Cat> query = _container.GetItemQueryIterator<Cat>(new QueryDefinition(sqlCosmosQuery));
+			List<Cat> cats = new();
+			while (query.HasMoreResults)
+			{
+				FeedResponse<Cat> response = await query.ReadNextAsync();
+				cats.AddRange(response);
+			}
+			return cats;
+		}
+
+		public async Task<Cat> UpdateAsync(Cat cat)
+		{
+			Cat modifiedCat = await _container.UpsertItemAsync(cat, new PartitionKey(cat.Name));
+			return modifiedCat;
 		}
 	}
 }
