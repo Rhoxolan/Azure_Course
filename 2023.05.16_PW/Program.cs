@@ -1,3 +1,4 @@
+using _2023._05._16_PW.Filters;
 using _2023._05._16_PW.Infrastructure.Services.CatCosmosService;
 using Microsoft.Azure.Cosmos;
 
@@ -15,6 +16,8 @@ builder.Services.AddScoped<ICatsCosmosService, CatsCosmosService>(opt =>
 	CosmosClient cosmosClient = new(uri, primaryKey);
 	return new CatsCosmosService(cosmosClient, darabaseName!, containerName!);
 });
+
+builder.Services.AddScoped<ApplicationExceptionFilterAttribute>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

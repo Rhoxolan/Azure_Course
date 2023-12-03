@@ -14,6 +14,7 @@ namespace _2023._05._16_PW.Infrastructure.Services.CatCosmosService
 
 		public async Task<Cat> AddAsync(Cat cat)
 		{
+			cat.Id = Guid.NewGuid().ToString();
 			Cat newCat = await _container.CreateItemAsync(cat, new PartitionKey(cat.Name));
 			return newCat;
 		}
@@ -23,8 +24,9 @@ namespace _2023._05._16_PW.Infrastructure.Services.CatCosmosService
 			await _container.DeleteItemAsync<Cat>(id, new PartitionKey(name));
 		}
 
-		public async Task<IEnumerable<Cat>> GetAsync(string sqlCosmosQuery)
+		public async Task<IEnumerable<Cat>> GetAsync()
 		{
+			string sqlCosmosQuery = "SELECT * FROM c";
 			FeedIterator<Cat> query = _container.GetItemQueryIterator<Cat>(new QueryDefinition(sqlCosmosQuery));
 			List<Cat> cats = new();
 			while (query.HasMoreResults)

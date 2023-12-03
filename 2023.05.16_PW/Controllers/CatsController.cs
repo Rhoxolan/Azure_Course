@@ -1,4 +1,5 @@
-﻿using _2023._05._16_PW.Infrastructure.Services.CatCosmosService;
+﻿using _2023._05._16_PW.Filters;
+using _2023._05._16_PW.Infrastructure.Services.CatCosmosService;
 using _2023._05._16_PW.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace _2023._05._16_PW.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[ApplicationExceptionFilter]
 	public class CatsController : ControllerBase
 	{
 		private readonly ICatsCosmosService _catsCosmosService;
@@ -18,24 +20,19 @@ namespace _2023._05._16_PW.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Cat>> Post(Cat newCat)
 		{
-			newCat.Id = Guid.NewGuid().ToString();
-			Cat catResult = await _catsCosmosService.AddAsync(newCat);
-			return Ok(catResult);
+			return Ok(await _catsCosmosService.AddAsync(newCat));
 		}
 
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Cat>>> Get()
 		{
-			string sqlCosmosQuery = "SELECT * FROM c";
-			IEnumerable<Cat> resutl = await _catsCosmosService.GetAsync(sqlCosmosQuery);
-			return Ok(resutl);
+			return Ok(await _catsCosmosService.GetAsync());
 		}
 
 		[HttpPut]
 		public async Task<ActionResult<Cat>> Put(Cat updatingCat)
 		{
-			Cat catResult = await _catsCosmosService.UpdateAsync(updatingCat);
-			return Ok(catResult);
+			return Ok(await _catsCosmosService.UpdateAsync(updatingCat));
 		}
 
 		[HttpDelete]
