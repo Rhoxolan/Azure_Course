@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Azure.Data.Tables;
+using _2023._05._19_PW.Models;
+using System.Linq;
 
 namespace _2023._05._19_PW
 {
@@ -30,7 +32,39 @@ namespace _2023._05._19_PW
 					"http://localhost:7015/api/set?href=https://mystat.itstep.org/index");
 			}
 
-            return new OkObjectResult("");
-        }
+			UrlKey urlKey;
+			var result = await tableClient.GetEntityIfExistsAsync<UrlKey>("1", "Key");
+			if (!result.HasValue)
+			{
+				urlKey = new UrlKey() { Id = 1024, PartitionKey = "1", RowKey = "Key" };
+				await tableClient.UpsertEntityAsync(urlKey);
+			}
+			else
+			{
+				urlKey = result.Value;
+			}
+			int index = urlKey.Id;
+			string code = "";
+			string alphabet = "ABCDEFGHIGKLMNOPQRSTUVWXYZ";
+			while (index > 0)
+			{
+				code += alphabet[index % alphabet.Length];
+				index /= alphabet.Length;
+			}
+			code = string.Join(string.Empty, code.Reverse());
+			UrlData urlData = new UrlData
+			{
+				RowKey = code,
+				PartitionKey = code[0].ToString(),
+				Url = href,
+				Count = 1,
+				Id = code
+			};
+			urlKey.Id++;
+			await tableClient.UpsertEntityAsync(urlData);
+			await tableClient.UpsertEntityAsync(urlKey);
+
+			return new OkObjectResult(new { href, shortUrl = urlData.RowKey });
+		}
     }
 }
