@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "_2023._05._19_PW": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7015",
+      "launchBrowser": false
+    }
+  }
+}
