@@ -13,10 +13,10 @@ using System.Linq;
 
 namespace _2023._05._19_PW
 {
-    public static class FunctionUrlShortener
+    public class FunctionUrlShortener
     {
         [FunctionName("Set")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
 			[Table("shortUrl")] TableClient tableClient,
 			ILogger log)
@@ -66,5 +66,40 @@ namespace _2023._05._19_PW
 
 			return new OkObjectResult(new { href, shortUrl = urlData.RowKey });
 		}
-    }
+
+		[FunctionName("Get")]
+		public async Task<IActionResult> Get(
+			[HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get/{shortUrl}")] HttpRequest req,
+			string shortUrl,
+			[Table("shortUrl")] TableClient tableClient,
+			[Queue("counts")] IAsyncCollector<string> queue
+			)
+		{
+			if (string.IsNullOrEmpty(shortUrl))
+				return new BadRequestResult();
+
+			shortUrl = shortUrl.ToUpper();
+			var result = await tableClient.GetEntityIfExistsAsync<UrlData>(partitionKey: shortUrl[0].ToString(), shortUrl);
+
+			if (!result.HasValue)
+				return new BadRequestObjectResult("There's no such short URL!");
+
+			await queue.AddAsync(result.Value.RowKey);
+
+			return new OkObjectResult(result.Value.Url);
+		}
+
+		[FunctionName("ProcessQueue")]
+		public async Task ProcessQueue(
+			[QueueTrigger("counts")] string shortCode,
+			[Table("shortUrl")] TableClient tableClient
+			)
+		{
+			var result = await tableClient.GetEntityIfExistsAsync<UrlData>(
+				partitionKey: shortCode[0].ToString(),
+				shortCode);
+			result.Value.Count++;
+			await tableClient.UpsertEntityAsync(result.Value);
+		}
+	}
 }
