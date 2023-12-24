@@ -1,14 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
 		<RootNamespace>_2023._05._19_PW</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Data.Tables" Version="12.8.0" />
 		<PackageReference Include="Azure.Storage.Queues" Version="12.14.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.1.2" />
 		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Tables" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
 	</ItemGroup>
 	<ItemGroup>
