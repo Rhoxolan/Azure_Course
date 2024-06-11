@@ -38,8 +38,16 @@ namespace _2023._05._25_PW
 
 			Console.WriteLine($"Image Analize with filename: {Path.GetFileName(url)}{NewLine}");
 
-			Console.WriteLine("Faces:" + NewLine);
+			Console.WriteLine("Objects:" + NewLine);
 			GetObjects(imageAnalysis);
+			Console.WriteLine();
+
+			Console.WriteLine("Tags:" + NewLine);
+			GetTags(imageAnalysis);
+			Console.WriteLine();
+
+			Console.WriteLine("Brands:" + NewLine);
+			GetBrands(imageAnalysis);
 			Console.WriteLine();
 
 			Console.WriteLine("Faces:" + NewLine);
@@ -54,8 +62,12 @@ namespace _2023._05._25_PW
 			GetCaptions(imageAnalysis);
 			Console.WriteLine();
 
+			Console.WriteLine("Color scheme:" + NewLine);
+			GetColorScheme(imageAnalysis);
+			Console.WriteLine();
+
 			Console.WriteLine("Celebrities:" + NewLine);
-			GetCelebriries(imageAnalysis);
+			GetCelebrities(imageAnalysis);
 			Console.WriteLine();
 
 			Console.WriteLine("LandMarks:" + NewLine);
@@ -71,6 +83,24 @@ namespace _2023._05._25_PW
 					$"({@object.Rectangle.X},{@object.Rectangle.Y}) - " +
 					$"({@object.Rectangle.X + @object.Rectangle.W}," +
 					$" {@object.Rectangle.Y + @object.Rectangle.H})");
+		}
+
+		static void GetTags(ImageAnalysis imageAnalysis)
+		{
+			foreach (var tag in imageAnalysis.Tags)
+				Console.WriteLine($"{tag.Name} with {tag.Confidence}");
+		}
+
+		static void GetBrands(ImageAnalysis imageAnalysis)
+		{
+			foreach (var brand in imageAnalysis.Brands)
+			{
+				Console.WriteLine($"Brand {brand.Name} " +
+					$"with confidence {brand.Confidence} is in region " +
+					$"({brand.Rectangle.X},{brand.Rectangle.Y}) - " +
+					$"({brand.Rectangle.X + brand.Rectangle.W}," +
+					$" {brand.Rectangle.Y + brand.Rectangle.H})");
+			}
 		}
 
 		static void GetFaces(ImageAnalysis imageAnalysis)
@@ -97,7 +127,21 @@ namespace _2023._05._25_PW
 				Console.WriteLine($"Caption: {caption.Text}, confidence: {caption.Confidence}");
 		}
 
-		static void GetCelebriries(ImageAnalysis imageAnalysis)
+		static void GetColorScheme(ImageAnalysis imageAnalysis)
+		{
+			Console.WriteLine("\n=> Colors:");
+			Console.WriteLine($"Accent color: {imageAnalysis.Color.AccentColor}");
+			Console.WriteLine($"Prevailing background colour:" +
+				$" {imageAnalysis.Color.DominantColorBackground}");
+			Console.WriteLine($"Prevailing primary colour: " +
+				$"{imageAnalysis.Color.DominantColorForeground}");
+			Console.WriteLine("Primary Colors: " +
+				string.Join(", ", imageAnalysis.Color.DominantColors));
+			Console.WriteLine("The image is " +
+				(imageAnalysis.Color.IsBWImg ? "black-white" : "colorful"));
+		}
+
+		static void GetCelebrities(ImageAnalysis imageAnalysis)
 		{
 			foreach (Category category in imageAnalysis.Categories)
 			{
