@@ -4,14 +4,15 @@ namespace _2023._05._23_PW
 {
 	internal class Program
 	{
-		private const string uri = "http://a645c335-d93e-44aa-812c-490d2a8ae513.polandcentral.azurecontainer.io/score";
-
 		static void Main(string[] args)
 		{
-			InvokeRequestResponseService().Wait();
+			Console.WriteLine("Please, Enter the uri:");
+			string uri = Console.ReadLine()!;
+
+			InvokeRequestResponseService(uri).Wait();
 		}
 
-		static async Task InvokeRequestResponseService()
+		static async Task InvokeRequestResponseService(string uri)
 		{
 			HttpClient client = new();
 

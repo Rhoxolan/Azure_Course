@@ -4,18 +4,18 @@ namespace _2023._05._23_PW
 {
 	internal class Program
 	{
-		private const string uri = "http://6885b123-ca19-4e77-8110-5f976a7248ae.polandcentral.azurecontainer.io/score";
-
 		static void Main(string[] args)
 		{
+			Console.WriteLine("Please, Enter the uri:");
+			string uri = Console.ReadLine()!;
 			Console.WriteLine("Please, Enter the path to the JSON file:");
 			string content = File.ReadAllText(Console.ReadLine()!);
 			Console.WriteLine();
 
-			InvokeRequestResponseService(content).Wait();
+			InvokeRequestResponseService(uri, content).Wait();
 		}
 
-		static async Task InvokeRequestResponseService(string jsonContent)
+		static async Task InvokeRequestResponseService(string uri, string jsonContent)
 		{
 			HttpClient client = new();
 
