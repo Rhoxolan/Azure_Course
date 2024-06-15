@@ -8,46 +8,20 @@ namespace _2023._05._23_PW
 
 		static void Main(string[] args)
 		{
-			InvokeRequestResponseService().Wait();
+			Console.WriteLine("Please, Enter the path to the JSON file:");
+			string content = File.ReadAllText(Console.ReadLine()!);
+			Console.WriteLine();
+
+			InvokeRequestResponseService(content).Wait();
 		}
 
-		static async Task InvokeRequestResponseService()
+		static async Task InvokeRequestResponseService(string jsonContent)
 		{
 			HttpClient client = new();
 
 			using HttpRequestMessage httpRequest = new(HttpMethod.Post, uri);
 
-			var requestBody = @"{
-                  ""Inputs"": {
-                    ""data"": [
-                      {
-                        ""ID"": ""example_value"",
-                        ""name"": ""example_value"",
-                        ""category"": ""example_value"",
-                        ""main_category"": ""example_value"",
-                        ""currency"": ""example_value"",
-                        ""deadline"": ""example_value"",
-                        ""goal"": ""example_value"",
-                        ""launched"": ""example_value"",
-                        ""pledged"": ""example_value"",
-                        ""backers"": ""example_value"",
-                        ""country"": ""example_value"",
-                        ""usd pledged"": 0.0,
-                        ""usd_pledged_real"": ""example_value"",
-                        ""usd_goal_real;;;;"": ""example_value"",
-                        ""Column16"": ""example_value"",
-                        ""Column17"": ""example_value"",
-                        ""Column18"": ""example_value"",
-                        ""Column19"": ""example_value""
-                      }
-                    ]
-                  },
-                  ""GlobalParameters"": {
-                    ""method"": ""predict""
-                  }
-                }";
-
-			httpRequest.Content = new StringContent(requestBody);
+			httpRequest.Content = new StringContent(jsonContent);
 			httpRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
 			HttpResponseMessage response = await client.SendAsync(httpRequest);
