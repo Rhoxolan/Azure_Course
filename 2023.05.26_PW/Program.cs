@@ -1,8 +1,11 @@
-﻿namespace _2023._05._26_PW
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
+
+namespace _2023._05._26_PW
 {
 	internal class Program
 	{
-		static void Main(string[] args)
+		static async Task Main(string[] args)
 		{
 			var dto = new AzureTranslateDTO();
 
@@ -23,11 +26,26 @@
 
 			Console.Write("Please, enter the thext to translate: ");
 			dto.Text = Console.ReadLine();
+
+			var result = await Translate(dto);
+
+			Console.WriteLine(Environment.NewLine + result);
 		}
 
 		static async Task<string> Translate(AzureTranslateDTO dto)
 		{
-			throw new NotImplementedException();
+			HttpClient client = new();
+
+			var uri = $"{dto.Uri}/translate?api-version={dto.ApiVersion}&from={dto.From}&to{dto.To}";
+
+			using HttpRequestMessage httpRequest = new(HttpMethod.Post, uri);
+
+			httpRequest.Content = new StringContent(JsonSerializer.Serialize(new { value = dto.Text }));
+			httpRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+			httpRequest.Headers.Add("Ocp-Apim-Subscription-Key", dto.Key);
+
+			HttpResponseMessage response = await client.SendAsync(httpRequest);
+			return await response.Content.ReadAsStringAsync();
 		}
 	}
 
@@ -43,6 +61,6 @@
 
 		public string? ApiVersion { get; set; }
 
-		public string? Text {  get; set; }
+		public string? Text { get; set; }
 	}
 }
