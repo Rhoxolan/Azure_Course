@@ -1,0 +1,6 @@
+@WebHookTelegramBot_HostAddress = http://localhost:5043
+
+GET {{WebHookTelegramBot_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
