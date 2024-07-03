@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Telegram.Bot;
+﻿using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
-using WebHookTelegramBot.Configuration;
+using WebHookTelegramBot.Services.TelegramBotService;
 
 namespace WebHookTelegramBot.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class BotController() : ControllerBase
+	public class BotController(ITelegramBotService telegramBotService) : ControllerBase
 	{
-		public async Task<IActionResult> Post([FromBody]Update update)
+		[HttpPost]
+		public async Task Post([FromBody]Update update)
 		{
-			throw new NotImplementedException();
+			await telegramBotService.RespondAsync(update);
 		}
 	}
 }
